@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # image = cv2.imread('2.png')
 cap = cv2.VideoCapture('klip5.mp4')
 ret, frame = cap.read()
-background_color = (150, 150, 150)
+paleta = cv2.CascadeClassifier('cascade.xml')
 
 while True:
     # Konwersja do przestrzeni kolorów HSV
@@ -16,6 +16,7 @@ while True:
     hist = cv2.calcHist([gray_frame], [0], None, [256], [0, 256])
     # plt.plot(hist)
     # plt.show()
+
     ret, thresholded_image = cv2.threshold(gray_frame, 180, 255, cv2.THRESH_BINARY)
     cv2.imshow('gray', thresholded_image)
 
@@ -52,6 +53,13 @@ while True:
                 # Prostokąt zielony
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 cv2.putText(frame, 'pole odkladcze', (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+    palety = paleta.detectMultiScale(gray_frame, 1.3, 20, minSize=(200, 70))
+
+    # add this
+    for (x, y, w, h) in palety:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 0), 2)
+        cv2.putText(frame, "Paleta", (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
 
     # Wyświetlenie wynikowego obrazu
     cv2.imshow("Wynik", frame)
